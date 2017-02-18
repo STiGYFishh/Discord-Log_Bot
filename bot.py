@@ -96,8 +96,9 @@ async def shutdown():
     loggy.logout
     
 @loggy.event
-async def on_server_join():
-    settings.check_servers(loggy)
+async def on_server_join(server):
+    print("Bot was added to {} : {}".format(server.id, server.name))
+    await settings.check_servers(loggy)
 
 @loggy.event
 async def on_ready():
