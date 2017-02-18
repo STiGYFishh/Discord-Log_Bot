@@ -10,9 +10,6 @@ import os
 async def check_servers(loggy):
     print("Checking Servers... \n")
     for server in loggy.servers:
-        if get_settings(server.id)["log-channels"]["general"] == "":
-            await loggy.send_message(server.default_channel, ".\n No General logs channel! Logging functions will not work! \n"
-                                                        "Please set the general logs channel using `/logchannel general (ID)`")
         if get_settings(server.id):
             print(" Connected to {} : {}".format(server.id, server.name))
             sleep(1) 
@@ -26,6 +23,10 @@ async def check_servers(loggy):
             new["admins"] = {}
             new["welcome-message"] = ""
             save_all_settings(server.id, new)
+            
+        if get_settings(server.id)["log-channels"]["general"] == "":
+            await loggy.send_message(server.default_channel, ".\n No General logs channel! Logging functions will not work! \n"
+                                                        "Please set the general logs channel using `/logchannel general (ID)`")
     print(" Done!")
             
     
