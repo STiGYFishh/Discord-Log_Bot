@@ -71,8 +71,56 @@ class Logging:
                 else:
                     message = "{0} Is now playing {1}"
                     await self.loggy.send_message(self.loggy.get_channel(settings.get_settings(before.server.id)["log-channels"]["games"]), message.format(before.name, after.game))
+                    
 
+    async def on_channel_create(self, channel):
+        log_message = "Channel '{}' was created with topic '{}'".format(channel.name, channel.topic)
+        await self.loggy.send_message(self.loggy.get_channel(settings.get_settings(channel.server.id)["log-channels"]["general"]), log_message)
+        settings.log(channel.server.id, "audit", log_message)
+        
+    async def on_channel_delete(self, channel):
+        log_message = "Channel '{}' was deleted".format(channel.name)
+        await self.loggy.send_message(self.loggy.get_channel(settings.get_settings(channel.server.id)["log-channels"]["general"]), log_message)
+        settings.log(channel.server.id, "audit", log_message)
+        
+    async def on_channel_update(self, before, after):
+        if before.name != after.name:
+            log_message = "Channel '{}' was renamed to '{}'"
+            await self.loggy.send_message(self.loggy.get_channel(settings.get_settings(before.server.id)["log-channels"]["general"]), log_message.format(before.name, after.mention))
+            settings.log(before.server.id, "audit", log_message.format(before.name, after.name))
+        if before.topic != after.topic:
+            log_message = "The topic for channel '{}' was changed to '{}'"
+            await self.loggy.send_message(self.loggy.get_channel(settings.get_settings(before.server.id)["log-channels"]["general"]), log_message.format(before.mention, after.topic))
+            settings.log(before.server.id, "audit", log_message.format(before.name, after.topic))
             
+    async def on_message_edit(self, before, after):
+        if before.pinned == False and after.pinned == True:
+            log_message = "The follwing message was pinned: \n `{}`".format(after.content)
+            await self.loggy.send_message(self.loggy.get_channel(settings.get_settings(before.server.id)["log-channels"]["general"]), log_message)
+            settings.log(before.server.id, "audit", log_message)
+            
+        if before.pinned == True and after.pinned == False:
+            log_message = "The follwing message was unpinned: \n `{}`".format(after.content)
+            await self.loggy.send_message(self.loggy.get_channel(settings.get_settings(before.server.id)["log-channels"]["general"]), log_message)
+            settings.log(before.server.id, "audit", log_message)
+            
+        if before.content != after.content:
+            if before.pinned == True and after.pinned == True:
+                log_message = "The following **pinned** message belonging to {} was edited: \n Original: \n `{}` \n Modified: \n `{}` \n".format(before.author.name, before.content, after.content)
+                await self.loggy.send_message(self.loggy.get_channel(settings.get_settings(before.server.id)["log-channels"]["general"]), log_message)
+                settings.log(before.server.id, "audit", log_message)
+                
+            log_message = "The following message belonging to {} was edited: \n Original: \n `{}` \n Modified: \n `{}` \n".format(before.author.name, before.content, after.content)           
+            await self.loggy.send_message(self.loggy.get_channel(settings.get_settings(before.server.id)["log-channels"]["general"]), log_message)
+            settings.log(before.server.id, "audit", log_message)
+        
+    async def on_message_delete(self, message):
+        if message.author.bot:  
+            return
+        log_message = "The Following Message belonging to {} was deleted: \n `{}`".format(message.author.name, message.content)
+        await self.loggy.send_message(self.loggy.get_channel(settings.get_settings(message.server.id)["log-channels"]["general"]), log_message)
+        settings.log(message.server.id, "audit", log_message)    
+      
 def setup(loggy):
     loggy.add_cog(Logging(loggy))
     

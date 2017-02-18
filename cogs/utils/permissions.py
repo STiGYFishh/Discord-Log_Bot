@@ -6,6 +6,9 @@ def is_setup():
     def predicate(ctx):
         if settings.get_settings(ctx.message.server.id)["log-channels"]["general"] == "":
             raise commands.CheckFailure("Cannot Process Actions; General Logs Channel not set!")
+            return False
+        else:
+            return True
     return commands.check(predicate)
      
 def are_you_my_mummy():
