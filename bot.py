@@ -31,11 +31,7 @@ async def on_command_error(error, ctx):
     elif isinstance(error, commands.DisabledCommand):
         await loggy.send_message(ctx.message.author, "Sorry. This command is disabled and cannot be used.")
     elif isinstance(error, commands.CheckFailure):
-        if error.args[0] == "Cannot Process Actions; General Logs Channel not set!":
-            await loggy.send_message(ctx.message.author, error)
-        else:
-            await loggy.send_message(ctx.message.author, "You do not have permission to use this command. This incident has been logged.")
-            settings.log(ctx.message.server.id, "audit", "{} tried to execute command {} but failed the permissions check!".format(ctx.message.author,ctx.command.qualified_name))
+        await loggy.send_message(ctx.message.author, error)
     elif isinstance(error, commands.CommandInvokeError):
         print("In {0.command.qualified_name}:".format(ctx), file=sys.stderr)
         traceback.print_tb(error.original.__traceback__)
