@@ -52,7 +52,7 @@ class Logging:
             if after.nick is None:
                 message = "{0} Reset their nickname"
                 await self.loggy.send_message(self.loggy.get_channel(settings.get_settings(before.server.id)["log-channels"]["general"]), message.format(before.name))
-                settings.log(before.server.id, "general", u"{0} changed reset their nickname".format(before.name)) 
+                settings.log(before.server.id, "general", u"{0} reset their nickname".format(before.name)) 
             else:
                 message = "{0} Changed their nickname to {1}"
                 await self.loggy.send_message(self.loggy.get_channel(settings.get_settings(before.server.id)["log-channels"]["general"]), message.format(before.name, after.nick))
